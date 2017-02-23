@@ -1,5 +1,6 @@
 {
     "name": "dprmc/interactive-data-remote-plus",
+    "version": "1.0.0",
     "description": "A php package that interfaces with the Remote Plus pricing HTTP API by Interactive Data.",
     "type": "library",
     "require-dev": {
@@ -12,5 +13,10 @@
         }
     ],
     "minimum-stability": "stable",
-    "require": {}
+    "require": {
+        "guzzlehttp/guzzle": "^6.2"
+    },
+    "autoload": {
+        "psr-4": {"DPRMC\\InteractiveData\\": "src/"}
+    }
 }
