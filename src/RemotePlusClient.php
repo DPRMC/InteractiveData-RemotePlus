@@ -21,7 +21,7 @@ class RemotePlusClient {
      */
     protected $client;
 
-    protected $baseUri = 'rplus.interactivedata.com';
+    protected $baseUri = 'http://rplus.interactivedata.com';
     protected $page = '/cgi/nph-rplus';
     protected $requestPrefix = 'Request=';
     protected $requestSuffix = '&Done=flag';
