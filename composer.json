@@ -1,0 +1,16 @@
+{
+    "name": "dprmc/interactive-data-remote-plus",
+    "description": "A php package that interfaces with the Remote Plus pricing HTTP API by Interactive Data.",
+    "type": "library",
+    "require-dev": {
+        "phpunit/phpunit": "5.7.*"
+    },
+    "authors": [
+        {
+            "name": "Michael Drennen",
+            "email": "mdrennen@deerparkrd.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
