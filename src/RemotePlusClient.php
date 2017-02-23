@@ -2,6 +2,7 @@
 namespace DPRMC\InteractiveData;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
 
 
 class RemotePlusClient {
@@ -20,6 +21,11 @@ class RemotePlusClient {
      * @var \GuzzleHttp\Client
      */
     protected $client;
+
+    /**
+     * @var \GuzzleHttp\Psr7\Request;
+     */
+    protected $request;
 
     protected $baseUri = 'http://rplus.interactivedata.com';
     protected $page = '/cgi/nph-rplus';
@@ -44,20 +50,31 @@ class RemotePlusClient {
         $this->setUser($user);
         $this->setPass($pass);
         $this->client = new Client(['base_uri' => $this->baseUri]);
+
+        $body = 'Request=GET%2CIDC%2CDES1&Done=flag';
+        $this->request = new Request('POST', $this->baseUri . $this->page, [], $body);
+
     }
 
 
     public function request() {
-        $this->rawResponse = $this->client->request('POST',
-                                                    $this->page,
-                                                    ['form_params' => ['Request' => implode(',',
-                                                                                            $this->cusips),
-                                                                       'Done' => 'request'],
-                                                     'auth' => [$this->user,
-                                                                $this->pass]
 
+        $client = new Client(['base_uri' => 'http://rplus.interactivedata.com']);
+        $cusips = ['004421JM6',
+                   '86359DLW5'];
+        $body = "Request=GET%2CIBM%2CDES1&Done=flag\n";
+        $body = 'Request=' . urlencode("GET,(" . implode(',',$cusips) . "),(PRC)," . date('Ymd')) . "&Done=flag\n";
+        $response = $client->request('POST',
+                                     '/cgi/nph-rplus',
+                                     ['debug' => true,
+                                      'version' => 1.0,
+                                      'headers' => [
+                                          'Content-Type' => 'application/x-www-form-urlencoded',
+                                          'Authorization'     => 'Basic ZDRkcnBrMTpXaW50ZXIxNw==',
+                                      ],
+                                      'body' => $body]);
 
-        ]);
+        $this->rawResponse = $this->client->send($this->request, ['debug'=>true]);
 
         return $this->rawResponse;
     }
