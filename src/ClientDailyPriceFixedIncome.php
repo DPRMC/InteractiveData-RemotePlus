@@ -33,6 +33,7 @@ class ClientDailyPriceFixedIncome extends RemotePlusClient{
                             $pass);
         $this->date = $this->formatDateForRemotePlus($date);
         $this->cusips = $this->pruneInvalidCusips($cusips);
+        $this->generateBodyForRequest();
     }
 
 
