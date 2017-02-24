@@ -133,4 +133,15 @@ abstract class RemotePlusClient {
      * classes to implement that code.
      */
     abstract protected function generateBodyForRequest();
+
+    /**
+     * It's up to each child class to determine what it does with the results
+     * sent back from Remote Plus.
+     */
+    abstract public function processResponse();
+
+    public function run(){
+        $this->sendRequest();
+        $this->processResponse();
+    }
 }

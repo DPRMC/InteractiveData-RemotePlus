@@ -86,5 +86,10 @@ class ClientDailyPriceFixedIncome extends RemotePlusClient{
         $this->requestBody = 'Request=' . urlencode("GET,(" . implode(',',$this->cusips) . "),(PRC)," . $this->date) . "&Done=flag\n";
     }
 
+    public function processResponse() {
+        $body = $this->response->getBody();
+        var_dump($body);
+    }
+
 
 }
