@@ -3,42 +3,73 @@ namespace DPRMC\InteractiveData;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
 
 
-class RemotePlusClient {
+abstract class RemotePlusClient {
 
     /**
-     * @var string
+     * @var string The base URI for the Remote Plus system.
+     */
+    protected $baseUri = 'http://rplus.interactivedata.com';
+
+    /**
+     * @var string The page (resource) to POST your Remote Plus query.
+     */
+    protected $page = '/cgi/nph-rplus';
+
+    /**
+     * @var string Your username supplied by Interactive Data.
      */
     protected $user = '';
 
     /**
-     * @var string
+     * @var string The password assigned to your username from Interactive Data.
      */
     protected $pass = '';
 
     /**
-     * @var \GuzzleHttp\Client
+     * @var \GuzzleHttp\Client The GuzzleHttp client used to POST to the Remote Plus API.
      */
     protected $client;
 
     /**
-     * @var \GuzzleHttp\Psr7\Request;
+     * @var Request; The request to the Remote Plus API
      */
     protected $request;
 
-    protected $baseUri = 'http://rplus.interactivedata.com';
-    protected $page = '/cgi/nph-rplus';
-    protected $requestPrefix = 'Request=';
-    protected $requestSuffix = '&Done=flag';
+    /**
+     * @var Response The response from the Remote Plus API
+     */
+    protected $response;
 
-    protected $rawData = '';
-    protected $urlEncodedData = '';
+    /**
+     * @var string The value required by Remote Plus for authentication.
+     */
+    protected $authorizationHeaderValue = '';
 
-    protected $rawResponse = '';
+    /**
+     * @var bool A parameter we pass in the request to Remote Plus to enable debugging information to be returned.
+     */
+    protected $remotePlusDebug = true;
 
-    protected $cusips = ['004421JM6',
-                         '86359DLW5'];
+    /**
+     * @var float The HTTP version that Remote Plus expects for requests.
+     */
+    protected $remotePlusHttpVersion = 1.0;
+
+    /**
+     * @var string The Content-Type header value that Remote Plus is expecting.
+     */
+    protected $remotePlusContentType = 'application/x-www-form-urlencoded';
+
+
+    /**
+     * @var string The formatted body of the request being sent to the Remote Plus API.
+     */
+    protected $requestBody = '';
+
+
 
 
     /**
@@ -47,85 +78,59 @@ class RemotePlusClient {
      * @param $pass string The password for the above username.
      */
     public function __construct($user, $pass) {
-        $this->setUser($user);
-        $this->setPass($pass);
-        $this->client = new Client(['base_uri' => $this->baseUri]);
-
-        $body = 'Request=GET%2CIDC%2CDES1&Done=flag';
-        $this->request = new Request('POST', $this->baseUri . $this->page, [], $body);
-
-    }
-
-
-    public function request() {
-
-        $client = new Client(['base_uri' => 'http://rplus.interactivedata.com']);
-        $cusips = ['004421JM6',
-                   '86359DLW5'];
-        $body = "Request=GET%2CIBM%2CDES1&Done=flag\n";
-        $body = 'Request=' . urlencode("GET,(" . implode(',',$cusips) . "),(PRC)," . date('Ymd')) . "&Done=flag\n";
-        $response = $client->request('POST',
-                                     '/cgi/nph-rplus',
-                                     ['debug' => true,
-                                      'version' => 1.0,
-                                      'headers' => [
-                                          'Content-Type' => 'application/x-www-form-urlencoded',
-                                          'Authorization'     => 'Basic ZDRkcnBrMTpXaW50ZXIxNw==',
-                                      ],
-                                      'body' => $body]);
-
-        $this->rawResponse = $this->client->send($this->request, ['debug'=>true]);
-
-        return $this->rawResponse;
-    }
-
-    public function addCusip($cusip) {
-
-    }
-
-    public function removeCusip($cusip) {
-
-    }
-
-    /**
-     * @return string
-     */
-    public function getUser() {
-        return $this->user;
-    }
-
-    /**
-     * @param string $user
-     */
-    public function setUser($user) {
         $this->user = $user;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPass() {
-        return $this->pass;
-    }
-
-    /**
-     * @param string $pass
-     */
-    public function setPass($pass) {
         $this->pass = $pass;
+        $this->client = new Client(['base_uri' => $this->baseUri]);
+        $this->authorizationHeaderValue = $this->getAuthenticationHeaderValue($this->user, $this->pass);
+    }
+
+
+    /**
+     * Sends the request to Remote Plus, and saves the Response object into our local $response property.
+     */
+    public function sendRequest(){
+        $this->response = $this->client->request('POST',
+                                           $this->page,
+                                           ['debug'   => $this->remotePlusDebug,
+                                            'version' => $this->remotePlusHttpVersion,
+                                            'headers' => [
+                                                'Content-Type'    => $this->remotePlusContentType,
+                                                'Authorization'   => $this->getAuthenticationHeaderValue($this->user, $this->pass),
+                                            ],
+                                            'body'    => $this->requestBody]);
+    }
+
+    public function getResponse(){
+        return $this->response;
+    }
+
+
+    /**
+     * Returns the value required by Remote Plus for the Authorization header.
+     * @param string $username The username set by Interactive Data
+     * @param string $pass The password assigned by Interactive Data
+     * @return string The value needed for the Authorization header.
+     */
+    protected function getAuthenticationHeaderValue($username, $pass){
+        return "Basic " . $this->encodeUserAndPassForBasicAuthentication($username, $pass);
+    }
+
+
+    /**
+     * Encodes the user and pass as required by the Basic Authorization.
+     * @see https://en.wikipedia.org/wiki/Basic_access_authentication
+     * @param string $username The username set by Interactive Data
+     * @param string $pass The password assigned by Interactive Data
+     * @return string The base64 encoded user:pass string.
+     */
+    protected function encodeUserAndPassForBasicAuthentication($username, $pass){
+        return base64_encode($username . ':' . $pass);
     }
 
     /**
-     * @return string
+     * Sets the $this->requestBody property. Every type of request sent to
+     * Remote Plus has a different syntax. It makes sense to force the child
+     * classes to implement that code.
      */
-    public function getApiUrl() {
-        return $this->apiUrl;
-    }
-
-    /**
-     * @param string $apiUrl
-     */
-    public function setApiUrl($apiUrl) {
-        $this->apiUrl = $apiUrl;
-    }
+    abstract protected function generateBodyForRequest();
 }

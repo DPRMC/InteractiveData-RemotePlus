@@ -14,7 +14,8 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "guzzlehttp/guzzle": "^6.2"
+        "guzzlehttp/guzzle": "^6.2",
+        "dprmc/cusip": "^1.0"
     },
     "autoload": {
         "psr-4": {"DPRMC\\InteractiveData\\": "src/"}
