@@ -28,9 +28,10 @@ class ClientDailyPriceFixedIncome extends RemotePlusClient{
      * @param string $date
      * @param array $cusips
      */
-    public function __construct($user, $pass, $date, $cusips) {
+    public function __construct($user, $pass, $date, $cusips, $debug=false) {
         parent::__construct($user,
                             $pass);
+        $this->remotePlusDebug = $debug;
         $this->date = $this->formatDateForRemotePlus($date);
         $this->cusips = $this->pruneInvalidCusips($cusips);
         $this->generateBodyForRequest();
