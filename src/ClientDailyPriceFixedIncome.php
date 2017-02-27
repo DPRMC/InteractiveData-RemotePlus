@@ -96,10 +96,19 @@ class ClientDailyPriceFixedIncome extends RemotePlusClient{
 
         $return = [];
         foreach($this->cusips as $i => $cusip){
-            $return[$cusip] = $prices[$i];
+            $return[$cusip] = $this->formatValueReturnedFromInteractiveData($prices[$i]);
         }
 
         return $return;
+    }
+
+    protected function formatValueReturnedFromInteractiveData($value){
+        if( is_numeric($value) ){
+            return (float)$value;
+        }
+
+        return str_replace('"','',$value);
+
     }
 
 
