@@ -142,6 +142,6 @@ abstract class RemotePlusClient {
 
     public function run(){
         $this->sendRequest();
-        $this->processResponse();
+        return $this->processResponse();
     }
 }
