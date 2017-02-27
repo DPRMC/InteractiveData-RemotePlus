@@ -87,8 +87,19 @@ class ClientDailyPriceFixedIncome extends RemotePlusClient{
     }
 
     public function processResponse() {
-        $body = $this->response->getBody();
-        return $body;
+        $body = (string)$this->response->getBody();
+
+        $prices = explode("\n",$body);
+        $prices = array_map('trim', $prices);
+
+        $crc = array_pop($prices); // Remove the CRC check.
+
+        $return = [];
+        foreach($this->cusips as $i => $cusip){
+            $return[$cusip] = $prices[$i];
+        }
+
+        return $return;
     }
 
 
