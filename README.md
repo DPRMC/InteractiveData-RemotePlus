@@ -4,7 +4,8 @@
 [![Latest Stable Version](https://poser.pugx.org/dprmc/interactive-data-remote-plus/v/stable)](https://packagist.org/packages/dprmc/interactive-data-remote-plus)
 [![Total Downloads](https://poser.pugx.org/dprmc/interactive-data-remote-plus/downloads)](https://packagist.org/packages/dprmc/interactive-data-remote-plus)
 [![License](https://poser.pugx.org/dprmc/interactive-data-remote-plus/license)](https://packagist.org/packages/dprmc/interactive-data-remote-plus)
-[![composer.lock](https://poser.pugx.org/dprmc/interactive-data-remote-plus/composerlock)](https://packagist.org/packages/dprmc/interactive-data-remote-plus)\
+[![composer.lock](https://poser.pugx.org/dprmc/interactive-data-remote-plus/composerlock)](https://packagist.org/packages/dprmc/interactive-data-remote-plus)
+[![Coverage Status](https://coveralls.io/repos/github/DPRMC/InteractiveData-RemotePlus/badge.svg?branch=master)](https://coveralls.io/github/DPRMC/InteractiveData-RemotePlus?branch=master)
 
 A php package that interfaces with the Remote Plus pricing HTTP API by Interactive Data.
 
