@@ -144,7 +144,7 @@ abstract class RemotePlusClient {
      * It's up to each child class to determine what it does with the results
      * sent back from Remote Plus.
      */
-    abstract public function processResponse();
+    abstract protected function processResponse();
 
     /**
      * Sets the $this->requestBody property. Every type of request sent to

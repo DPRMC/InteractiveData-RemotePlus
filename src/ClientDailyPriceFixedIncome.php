@@ -98,7 +98,7 @@ class ClientDailyPriceFixedIncome extends RemotePlusClient {
     /**
      * @return array
      */
-    public function processResponse() {
+    protected function processResponse() {
         $body = (string)$this->response->getBody();
 
         $prices = explode( "\n", $body );
