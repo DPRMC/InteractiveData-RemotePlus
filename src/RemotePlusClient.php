@@ -5,6 +5,11 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 
+/**
+ * This is the parent class that all API calls must extend.
+ * Class RemotePlusClient
+ * @package DPRMC\InteractiveData
+ */
 abstract class RemotePlusClient {
 
     /**
@@ -107,10 +112,17 @@ abstract class RemotePlusClient {
         return base64_encode( $username . ':' . $pass );
     }
 
+    /**
+     * Getter method for the Response object.
+     * @return Response
+     */
     public function getResponse() {
         return $this->response;
     }
 
+    /**
+     * @return mixed
+     */
     public function run() {
         $this->sendRequest();
 

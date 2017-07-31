@@ -3,6 +3,10 @@ namespace DPRMC\InteractiveData;
 
 use DPRMC\CUSIP;
 
+/**
+ * Class ClientDailyPriceFixedIncome
+ * @package DPRMC\InteractiveData
+ */
 class ClientDailyPriceFixedIncome extends RemotePlusClient {
 
     /**
