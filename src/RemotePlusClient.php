@@ -1,4 +1,5 @@
 <?php
+
 namespace DPRMC\InteractiveData;
 
 use GuzzleHttp\Client;
@@ -51,7 +52,7 @@ abstract class RemotePlusClient {
     /**
      * @var bool A parameter we pass in the request to Remote Plus to enable debugging information to be returned.
      */
-    protected $remotePlusDebug = true;
+    protected $remotePlusDebug = TRUE;
 
     /**
      * @var float The HTTP version that Remote Plus expects for requests.
@@ -70,69 +71,64 @@ abstract class RemotePlusClient {
     protected $requestBody = '';
 
 
-
-
     /**
      * RemotePlusClient constructor.
+     *
      * @param $user string The username given to you by Interactive Data
      * @param $pass string The password for the above username.
      */
-    public function __construct($user, $pass) {
-        $this->user = $user;
-        $this->pass = $pass;
-        $this->client = new Client(['base_uri' => $this->baseUri]);
-        $this->authorizationHeaderValue = $this->getAuthenticationHeaderValue($this->user, $this->pass);
+    public function __construct( $user, $pass ) {
+        $this->user                     = $user;
+        $this->pass                     = $pass;
+        $this->client                   = new Client( [ 'base_uri' => $this->baseUri ] );
+        $this->authorizationHeaderValue = $this->getAuthenticationHeaderValue( $this->user, $this->pass );
     }
-
-
-    /**
-     * Sends the request to Remote Plus, and saves the Response object into our local $response property.
-     */
-    public function sendRequest(){
-        $this->response = $this->client->request('POST',
-                                           $this->page,
-                                           ['debug'   => $this->remotePlusDebug,
-                                            'version' => $this->remotePlusHttpVersion,
-                                            'headers' => [
-                                                'Content-Type'    => $this->remotePlusContentType,
-                                                'Authorization'   => $this->getAuthenticationHeaderValue($this->user, $this->pass),
-                                            ],
-                                            'body'    => $this->requestBody]);
-    }
-
-    public function getResponse(){
-        return $this->response;
-    }
-
 
     /**
      * Returns the value required by Remote Plus for the Authorization header.
+     *
      * @param string $username The username set by Interactive Data
-     * @param string $pass The password assigned by Interactive Data
+     * @param string $pass     The password assigned by Interactive Data
+     *
      * @return string The value needed for the Authorization header.
      */
-    protected function getAuthenticationHeaderValue($username, $pass){
-        return "Basic " . $this->encodeUserAndPassForBasicAuthentication($username, $pass);
+    protected function getAuthenticationHeaderValue( $username, $pass ) {
+        return "Basic " . $this->encodeUserAndPassForBasicAuthentication( $username, $pass );
     }
-
 
     /**
      * Encodes the user and pass as required by the Basic Authorization.
      * @see https://en.wikipedia.org/wiki/Basic_access_authentication
+     *
      * @param string $username The username set by Interactive Data
-     * @param string $pass The password assigned by Interactive Data
+     * @param string $pass     The password assigned by Interactive Data
+     *
      * @return string The base64 encoded user:pass string.
      */
-    protected function encodeUserAndPassForBasicAuthentication($username, $pass){
-        return base64_encode($username . ':' . $pass);
+    protected function encodeUserAndPassForBasicAuthentication( $username, $pass ) {
+        return base64_encode( $username . ':' . $pass );
+    }
+
+    public function getResponse() {
+        return $this->response;
+    }
+
+    public function run() {
+        $this->sendRequest();
+
+        return $this->processResponse();
     }
 
     /**
-     * Sets the $this->requestBody property. Every type of request sent to
-     * Remote Plus has a different syntax. It makes sense to force the child
-     * classes to implement that code.
+     * Sends the request to Remote Plus, and saves the Response object into our local $response property.
      */
-    abstract protected function generateBodyForRequest();
+    public function sendRequest() {
+        $this->response = $this->client->request( 'POST', $this->page, [ 'debug'   => $this->remotePlusDebug,
+                                                                         'version' => $this->remotePlusHttpVersion,
+                                                                         'headers' => [ 'Content-Type'  => $this->remotePlusContentType,
+                                                                                        'Authorization' => $this->getAuthenticationHeaderValue( $this->user, $this->pass ), ],
+                                                                         'body'    => $this->requestBody ] );
+    }
 
     /**
      * It's up to each child class to determine what it does with the results
@@ -140,8 +136,10 @@ abstract class RemotePlusClient {
      */
     abstract public function processResponse();
 
-    public function run(){
-        $this->sendRequest();
-        return $this->processResponse();
-    }
+    /**
+     * Sets the $this->requestBody property. Every type of request sent to
+     * Remote Plus has a different syntax. It makes sense to force the child
+     * classes to implement that code.
+     */
+    abstract protected function generateBodyForRequest();
 }
