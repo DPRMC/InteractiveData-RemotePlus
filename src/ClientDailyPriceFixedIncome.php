@@ -1,11 +1,9 @@
 <?php
-
 namespace DPRMC\InteractiveData;
 
 use DPRMC\CUSIP;
 
 class ClientDailyPriceFixedIncome extends RemotePlusClient {
-
 
     /**
      * @var string YYYY-mm-dd The date you want pricing for.
@@ -93,6 +91,9 @@ class ClientDailyPriceFixedIncome extends RemotePlusClient {
         $this->requestBody = 'Request=' . urlencode( "GET,(" . implode( ',', $this->cusips ) . "),(PRC)," . $this->date ) . "&Done=flag\n";
     }
 
+    /**
+     * @return array
+     */
     public function processResponse() {
         $body = (string)$this->response->getBody();
 
@@ -115,8 +116,5 @@ class ClientDailyPriceFixedIncome extends RemotePlusClient {
         }
 
         return str_replace( '"', '', $value );
-
     }
-
-
 }

@@ -1,23 +1,26 @@
 {
-    "name": "dprmc/interactive-data-remote-plus",
-    "version": "1.0.0",
-    "description": "A php package that interfaces with the Remote Plus pricing HTTP API by Interactive Data.",
-    "type": "library",
-    "require-dev": {
-        "phpunit/phpunit": "5.7.*"
-    },
-    "authors": [
-        {
-            "name": "Michael Drennen",
-            "email": "mdrennen@deerparkrd.com"
-        }
-    ],
-    "minimum-stability": "stable",
-    "require": {
-        "guzzlehttp/guzzle": "^6.2",
-        "dprmc/cusip": "^1.0"
-    },
-    "autoload": {
-        "psr-4": {"DPRMC\\InteractiveData\\": "src/"}
+  "name": "dprmc/interactive-data-remote-plus",
+  "license": "MIT",
+  "description": "A PHP package that interfaces with the Remote Plus pricing HTTP API by Interactive Data.",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Michael Drennen",
+      "email": "mdrennen@deerparkrd.com"
     }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+    "guzzlehttp/guzzle": "^6.2",
+    "dprmc/cusip": "^1.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "5.7.*",
+    "league/climate": "^3.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "DPRMC\\InteractiveData\\": "src/"
+    }
+  }
 }

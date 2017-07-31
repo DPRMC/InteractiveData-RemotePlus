@@ -1,11 +1,9 @@
 <?php
-
 namespace DPRMC\InteractiveData;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-
 
 abstract class RemotePlusClient {
 
