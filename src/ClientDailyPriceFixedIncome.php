@@ -2,6 +2,7 @@
 namespace DPRMC\InteractiveData;
 
 use DPRMC\CUSIP;
+use DPRMC\InteractiveData\RemotePlusClient\Exceptions\UnparsableDateSentToConstructor;
 
 /**
  * Class ClientDailyPriceFixedIncome
@@ -53,15 +54,10 @@ class ClientDailyPriceFixedIncome extends RemotePlusClient {
      */
     protected function formatDateForRemotePlus( $date ) {
         $strTime = strtotime( $date );
-        if ( $strTime === FALSE ) {
-            throw new \Exception( "We could not parse the date you sent to the constructor: [" . $date . "]" );
-        }
-
+        if ( $strTime === FALSE ):
+            throw new UnparsableDateSentToConstructor( "We could not parse the date you sent to the constructor: [" . $date . "]" );
+        endif;
         $date = date( 'Ymd', $strTime );
-
-        if ( $date === FALSE ) {
-            throw new \Exception( "We were unable to format this timestamp into something Remote Plus can read: [" . $strTime . "]" );
-        }
 
         return $date;
     }
@@ -76,13 +72,13 @@ class ClientDailyPriceFixedIncome extends RemotePlusClient {
      */
     protected function pruneInvalidCusips( $cusips ) {
         $validCusips = [];
-        foreach ( $cusips as $cusip ) {
-            if ( CUSIP::isCUSIP( $cusip ) ) {
+        foreach ( $cusips as $cusip ):
+            if ( CUSIP::isCUSIP( $cusip ) ):
                 $validCusips[] = $cusip;
-            } else {
+            else:
                 $this->invalidCusips[] = $cusip;
-            }
-        }
+            endif;
+        endforeach;
 
         return $validCusips;
     }
