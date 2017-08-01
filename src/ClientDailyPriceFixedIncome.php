@@ -113,16 +113,24 @@ class ClientDailyPriceFixedIncome extends RemotePlusClient {
      * Extracted this into it's own function so I can stub and test without
      * having to make a request to the IDC server.
      * @return string
+     * @codeCoverageIgnore
      */
     protected function getBodyFromResponse() {
         return (string)$this->response->getBody();
     }
 
+    /**
+     * @param $value
+     *
+     * @return float
+     */
     protected function formatValueReturnedFromInteractiveData( $value ) {
         if ( is_numeric( $value ) ) {
             return (float)$value;
         }
 
-        return str_replace( '"', '', $value );
+        // @codeCoverageIgnoreStart
+        return (float)str_replace( '"', '', $value );
+        // @codeCoverageIgnoreEnd
     }
 }
