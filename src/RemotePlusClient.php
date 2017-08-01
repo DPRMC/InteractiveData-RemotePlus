@@ -113,27 +113,20 @@ abstract class RemotePlusClient {
     }
 
     /**
-     * Getter method for the Response object.
-     * @return Response
-     */
-    public function getResponse() {
-        return $this->response;
-    }
-
-    /**
      * @return mixed
      */
     public function run() {
-        $this->sendRequest();
+        $this->response = $this->sendRequest();
 
         return $this->processResponse();
     }
 
     /**
      * Sends the request to Remote Plus, and saves the Response object into our local $response property.
+     * @return Response The Guzzle response object.
      */
-    public function sendRequest() {
-        $this->response = $this->client->request( 'POST', $this->page, [ 'debug'   => $this->remotePlusDebug,
+    protected function sendRequest() {
+        return $this->client->request( 'POST', $this->page, [ 'debug'              => $this->remotePlusDebug,
                                                                          'version' => $this->remotePlusHttpVersion,
                                                                          'headers' => [ 'Content-Type'  => $this->remotePlusContentType,
                                                                                         'Authorization' => $this->getAuthenticationHeaderValue( $this->user, $this->pass ), ],

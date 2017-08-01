@@ -95,19 +95,27 @@ class ClientDailyPriceFixedIncome extends RemotePlusClient {
      * @return array
      */
     protected function processResponse() {
-        $body = (string)$this->response->getBody();
-
+        $body   = $this->getBodyFromResponse();
         $prices = explode( "\n", $body );
         $prices = array_map( 'trim', $prices );
-
+        $prices = array_filter( $prices );
         array_pop( $prices ); // Remove the CRC check.
 
         $return = [];
-        foreach ( $this->cusips as $i => $cusip ) {
+        foreach ( $this->cusips as $i => $cusip ):
             $return[ $cusip ] = $this->formatValueReturnedFromInteractiveData( $prices[ $i ] );
-        }
+        endforeach;
 
         return $return;
+    }
+
+    /**
+     * Extracted this into it's own function so I can stub and test without
+     * having to make a request to the IDC server.
+     * @return string
+     */
+    protected function getBodyFromResponse() {
+        return (string)$this->response->getBody();
     }
 
     protected function formatValueReturnedFromInteractiveData( $value ) {
