@@ -1,6 +1,5 @@
-/.gitignore
+/build/
 /vendor/
 /composer.lock
 /.coveralls.yml
-/Gemfile
 /.env
