@@ -1,4 +1,5 @@
 <?php
+
 namespace DPRMC\InteractiveData\RemotePlusClient\Tests;
 
 use DPRMC\InteractiveData\ClientDailyPriceFixedIncome;
@@ -25,16 +26,15 @@ class ClientDailyPriceFixedIncomeTest extends TestCase {
     protected $invalidCusips = [ '123456789' ];
 
     /**
-     *
+     * @test
      */
     public function testConstructor() {
         $client = new ClientDailyPriceFixedIncome( $this->invalidUser, $this->invalidPass, $this->validDate, $this->validCusips, FALSE );
         $this->assertInstanceOf( ClientDailyPriceFixedIncome::class, $client );
-        $this->assertAttributeCount( 1, 'cusips', $client );
     }
 
     /**
-     *
+     * @test
      */
     public function testConstructorWithUnparsableDate() {
         $this->expectException( UnparsableDateSentToConstructor::class );
@@ -42,16 +42,16 @@ class ClientDailyPriceFixedIncomeTest extends TestCase {
     }
 
     /**
-     *
+     * @test
      */
     public function testConstructorWithInvalidCusip() {
         $client = new ClientDailyPriceFixedIncome( $this->invalidUser, $this->invalidPass, $this->validDate, $this->invalidCusips, FALSE );
-        $this->assertAttributeCount( 0, 'cusips', $client );
-        $this->assertAttributeCount( 1, 'invalidCusips', $client );
+        $this->assertCount( 0, $client->getValidCusips() );
+        $this->assertCount( 1, $client->getInvalidCusips() );
     }
 
     /**
-     *
+     * @test
      */
     public function testRunWithInvalidCredentials() {
         $this->expectException( ClientException::class );
@@ -59,6 +59,10 @@ class ClientDailyPriceFixedIncomeTest extends TestCase {
         $client->run();
     }
 
+
+    /**
+     * @test
+     */
     public function testRunWithStubResponse() {
         $client = new ClientDailyPriceFixedIncome( $this->invalidUser, $this->invalidPass, $this->validDate, $this->validCusips, FALSE );
 

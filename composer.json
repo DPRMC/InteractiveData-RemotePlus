@@ -11,13 +11,13 @@
   ],
   "minimum-stability": "stable",
   "require": {
-    "guzzlehttp/guzzle": "^6.2",
-    "dprmc/cusip": "^1.0",
-    "satooshi/php-coveralls": "^1.0"
+    "guzzlehttp/guzzle": "^6.3",
+    "league/climate": "^3.4",
+    "dprmc/cusip": "^1.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "5.7.*",
-    "league/climate": "^3.2"
+    "php-coveralls/php-coveralls": "^2.1",
+    "phpunit/phpunit": "^7.5"
   },
   "autoload": {
     "psr-4": {

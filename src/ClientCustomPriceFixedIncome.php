@@ -30,7 +30,6 @@ class ClientCustomPriceFixedIncome extends RemotePlusClient {
     protected $pricesRequested = [];
 
 
-
     /**
      * ClientCustomPriceFixedIncome constructor.
      * @param $user
@@ -48,10 +47,23 @@ class ClientCustomPriceFixedIncome extends RemotePlusClient {
         $this->generateBodyForRequest();
     }
 
+
+    /**
+     * There are 500 pages of documented data points that you can request from InteractiveData. Instead of coding
+     * functions to add each one, it makes more sense to have a generic function available to add points.
+     * @see Look at the doc titled: "GuideToData20180413.docx" for documentation on the data points.
+     * @param string $dataPointCode
+     * @return $this
+     */
+    public function addDataPointCode( string $dataPointCode ) {
+        $this->pricesRequested[] = $dataPointCode;
+        return $this;
+    }
+
     /**
      * @return $this
      */
-    public function addBestPrice(){
+    public function addBestPrice() {
         $this->pricesRequested[] = 'PRC'; // number 16.7
         return $this;
     }

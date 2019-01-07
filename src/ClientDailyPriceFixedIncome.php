@@ -28,12 +28,12 @@ class ClientDailyPriceFixedIncome extends RemotePlusClient {
 
     /**
      * ClientDailyPriceFixedIncome constructor.
-     *
-     * @param string $user
-     * @param string $pass
-     * @param string $date
-     * @param array  $cusips
-     * @param bool   $debug
+     * @param $user
+     * @param $pass
+     * @param $date
+     * @param $cusips
+     * @param bool $debug
+     * @throws \Exception
      */
     public function __construct( $user, $pass, $date, $cusips, $debug = FALSE ) {
         parent::__construct( $user, $pass );
@@ -42,6 +42,24 @@ class ClientDailyPriceFixedIncome extends RemotePlusClient {
         $this->cusips          = $this->pruneInvalidCusips( $cusips );
         $this->generateBodyForRequest();
     }
+
+
+    /**
+     * @return array
+     */
+    public function getValidCusips(){
+        return $this->cusips;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getInvalidCusips(){
+        return $this->invalidCusips;
+    }
+
+
 
 
     /**
