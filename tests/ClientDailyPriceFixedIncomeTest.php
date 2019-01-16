@@ -2,6 +2,7 @@
 
 namespace DPRMC\InteractiveData\RemotePlusClient\Tests;
 
+use DPRMC\InteractiveData\ClientCustomPriceFixedIncome;
 use DPRMC\InteractiveData\ClientDailyPriceFixedIncome;
 use DPRMC\InteractiveData\RemotePlusClient\Exceptions\UnparsableDateSentToConstructor;
 use GuzzleHttp\Exception\ClientException;
@@ -86,4 +87,5 @@ class ClientDailyPriceFixedIncomeTest extends TestCase {
         $this->assertArrayHasKey( $this->validCusips[ 0 ], $cusipPriceArray );
         $this->assertEquals( $this->validPrices[ $this->validCusips[ 0 ] ], $cusipPriceArray[ $this->validCusips[ 0 ] ] );
     }
+
 }
