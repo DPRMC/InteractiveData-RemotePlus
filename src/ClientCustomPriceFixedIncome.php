@@ -147,11 +147,11 @@ class ClientCustomPriceFixedIncome extends RemotePlusClient {
      * @throws \Exception
      */
     protected function getPricesRequested() {
-        if ( empty( $pricesRequested ) ):
+        if ( empty( $this->pricesRequested ) ):
             throw new \Exception( "You have to add at least one price for this request." );
         endif;
 
-        return implode( ',', $pricesRequested );
+        return implode( ',', $this->pricesRequested );
     }
 
     /**
