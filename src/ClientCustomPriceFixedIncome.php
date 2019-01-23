@@ -30,6 +30,11 @@ class ClientCustomPriceFixedIncome extends RemotePlusClient {
     protected $pricesRequested = [];
 
 
+    public static function instantiate( $user, $pass, $date, $cusips, $debug = FALSE ) {
+        return new static( $user, $pass, $date, $cusips, $debug );
+    }
+
+
     /**
      * ClientCustomPriceFixedIncome constructor.
      * @param $user
@@ -44,7 +49,6 @@ class ClientCustomPriceFixedIncome extends RemotePlusClient {
         $this->remotePlusDebug = $debug;
         $this->date            = $this->formatDateForRemotePlus( $date );
         $this->cusips          = $this->pruneInvalidCusips( $cusips );
-        $this->generateBodyForRequest();
     }
 
 
@@ -71,24 +75,24 @@ class ClientCustomPriceFixedIncome extends RemotePlusClient {
     /**
      * @return $this
      */
-    public function addBid() {
-        $this->pricesRequested[] = 'BID'; // number 16.7
+    public function addIEBid() {
+        $this->pricesRequested[] = 'IEBID'; // number 16.7
         return $this;
     }
 
     /**
      * @return $this
      */
-    public function addMid() {
-        $this->pricesRequested[] = 'MID'; // number 16.7
+    public function addIEMid() {
+        $this->pricesRequested[] = 'IEMID'; // number 16.7
         return $this;
     }
 
     /**
      * @return $this
      */
-    public function addAsk() {
-        $this->pricesRequested[] = 'ASK'; // number 16.7
+    public function addIEAsk() {
+        $this->pricesRequested[] = 'IEASK'; // number 16.7
         return $this;
     }
 
@@ -154,22 +158,33 @@ class ClientCustomPriceFixedIncome extends RemotePlusClient {
         return implode( ',', $this->pricesRequested );
     }
 
-    /**
-     * @return array
-     */
-    protected function processResponse() {
-        $body   = $this->getBodyFromResponse();
+
+    protected function processResponse(): RemotePlusResponse {
+        $body = $this->getBodyFromResponse();
+
         $prices = explode( "\n", $body );
         $prices = array_map( 'trim', $prices );
         $prices = array_filter( $prices );
         array_pop( $prices ); // Remove the CRC check.
 
-        $return = [];
+        $remotePlusResponse = new RemotePlusResponse();
+
         foreach ( $this->cusips as $i => $cusip ):
-            $return[ $cusip ] = $this->formatValueReturnedFromInteractiveData( $prices[ $i ] );
+            $fixedIncomeResponse = new FixedIncomeResponse();
+            $fixedIncomeResponse->addCusip( $cusip );
+            $priceParts = explode( ',', $prices[ $i ] );
+
+            foreach ( $priceParts as $j => $price ):
+                $fixedIncomeResponse->addPrice(
+                    $this->pricesRequested[ $j ],
+                    $this->formatValueReturnedFromInteractiveData( $price )
+                );
+            endforeach;
+
+            $remotePlusResponse->addResponse( $fixedIncomeResponse );
         endforeach;
 
-        return $return;
+        return $remotePlusResponse;
     }
 
     /**
@@ -188,12 +203,12 @@ class ClientCustomPriceFixedIncome extends RemotePlusClient {
      * @return float
      */
     protected function formatValueReturnedFromInteractiveData( $value ) {
-        if ( is_numeric( $value ) ) {
+        if ( is_numeric( $value ) ):
             return (float)$value;
-        }
+        endif;
 
-        // @codeCoverageIgnoreStart
-        return (float)str_replace( '"', '', $value );
-        // @codeCoverageIgnoreEnd
+        if ( '"!NA"' == $value ):
+            return NULL;
+        endif;
     }
 }

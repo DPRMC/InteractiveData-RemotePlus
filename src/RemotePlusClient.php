@@ -114,8 +114,10 @@ abstract class RemotePlusClient {
 
     /**
      * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function run() {
+        $this->generateBodyForRequest();
         $this->response = $this->sendRequest();
 
         return $this->processResponse();
@@ -123,7 +125,8 @@ abstract class RemotePlusClient {
 
     /**
      * Sends the request to Remote Plus, and saves the Response object into our local $response property.
-     * @return Response The Guzzle response object.
+     * @return mixed|\Psr\Http\Message\ResponseInterface
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     protected function sendRequest() {
         return $this->client->request( 'POST', $this->page, [ 'debug'              => $this->remotePlusDebug,

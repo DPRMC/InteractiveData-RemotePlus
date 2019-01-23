@@ -3,3 +3,4 @@
 /composer.lock
 /.coveralls.yml
 /.env
+phpunit.xml

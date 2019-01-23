@@ -26,6 +26,10 @@
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
         <env name="DB_CONNECTION" value="test"/>
+
+        <env name="ICE_USER" value="testUsername"/>
+        <env name="ICE_PASS" value="testPassword"/>
+
     </php>
     <logging>
         <log type="coverage-html"
