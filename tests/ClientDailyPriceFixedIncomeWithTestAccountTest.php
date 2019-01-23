@@ -5,6 +5,7 @@ namespace DPRMC\InteractiveData\RemotePlusClient\Tests;
 use DPRMC\InteractiveData\ClientCustomPriceFixedIncome;
 use DPRMC\InteractiveData\ClientDailyPriceFixedIncome;
 use DPRMC\InteractiveData\RemotePlusClient\Exceptions\UnparsableDateSentToConstructor;
+use DPRMC\InteractiveData\RemotePlusResponse;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
@@ -33,9 +34,16 @@ class ClientDailyPriceFixedIncomeWithTestAccountTest extends TestCase {
 
         $client = ClientCustomPriceFixedIncome::instantiate( $user, $pass, $date, $cusips, $debug )->addIEBid()->addIEMid();
 
-        $result = $client->run();
+        /**
+         * @var RemotePlusResponse $response
+         */
+        $response = $client->run();
 
-        print_r( $result );
+        print_r( $response );
+
+        $fixedIncomeResponses = $response->getResponseByKey();
+
+        $this->assertNull($fixedIncomeResponses['22541QFF4']['prices']['IEBID']);
     }
 
 

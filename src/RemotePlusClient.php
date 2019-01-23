@@ -1,6 +1,8 @@
 <?php
+
 namespace DPRMC\InteractiveData;
 
+use DPRMC\InteractiveData\RemotePlusClient\Exceptions\UnparsableDateSentToConstructor;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
@@ -91,7 +93,7 @@ abstract class RemotePlusClient {
      * Returns the value required by Remote Plus for the Authorization header.
      *
      * @param string $username The username set by Interactive Data
-     * @param string $pass     The password assigned by Interactive Data
+     * @param string $pass The password assigned by Interactive Data
      *
      * @return string The value needed for the Authorization header.
      */
@@ -104,7 +106,7 @@ abstract class RemotePlusClient {
      * @see https://en.wikipedia.org/wiki/Basic_access_authentication
      *
      * @param string $username The username set by Interactive Data
-     * @param string $pass     The password assigned by Interactive Data
+     * @param string $pass The password assigned by Interactive Data
      *
      * @return string The base64 encoded user:pass string.
      */
@@ -129,12 +131,65 @@ abstract class RemotePlusClient {
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     protected function sendRequest() {
-        return $this->client->request( 'POST', $this->page, [ 'debug'              => $this->remotePlusDebug,
-                                                                         'version' => $this->remotePlusHttpVersion,
-                                                                         'headers' => [ 'Content-Type'  => $this->remotePlusContentType,
-                                                                                        'Authorization' => $this->getAuthenticationHeaderValue( $this->user, $this->pass ), ],
-                                                                         'body'    => $this->requestBody ] );
+        return $this->client->request( 'POST', $this->page, [
+            'debug'   => $this->remotePlusDebug,
+            'version' => $this->remotePlusHttpVersion,
+            'headers' => [ 'Content-Type'  => $this->remotePlusContentType,
+                           'Authorization' => $this->getAuthenticationHeaderValue( $this->user, $this->pass ), ],
+            'body'    => $this->requestBody,
+        ] );
     }
+
+
+    /**
+     * The RemotePlus system requires dates to be formatted as yyyymmdd
+     * @param string $date Any string that can be parsed by PHP's strtotime()
+     * @return string The $date parameter formatted as yyyymmdd (or in PHP's syntax: Ymd)
+     * @throws UnparsableDateSentToConstructor
+     */
+    protected function formatDateForRemotePlus( string $date ) {
+        $strTime = strtotime( $date );
+        if ( $strTime === FALSE ):
+            throw new UnparsableDateSentToConstructor( "We could not parse the date you sent to the constructor: [" . $date . "]" );
+        endif;
+        $date = date( 'Ymd', $strTime );
+
+        return (string)$date;
+    }
+
+
+    /**
+     * Extracted this into it's own function so I can stub and test without
+     * having to make a request to the IDC server.
+     * @return string
+     * @codeCoverageIgnore
+     */
+    protected function getBodyFromResponse() {
+        return (string)$this->response->getBody();
+    }
+
+    /**
+     * @param $value
+     * @return float
+     */
+    protected function formatValueReturnedFromInteractiveData( $value ) {
+        if ( is_numeric( $value ) ):
+            return (float)$value;
+        endif;
+
+        /**
+         * “!NA” not available
+         * “!NH” holiday (only applicable to US/Canadian securities)
+         * “!NE” not expected (e.g., prices for future dates)
+         * “!NR” not reported
+         * “!N5” an error code 5000 was returned
+         * “!N6” an error code 6000 was returned
+         * “!N7” an error code 7000 was returned
+         * “!N8” an error code 8000 was returned
+         */
+        return NULL;
+    }
+
 
     /**
      * It's up to each child class to determine what it does with the results

@@ -207,8 +207,16 @@ class ClientCustomPriceFixedIncome extends RemotePlusClient {
             return (float)$value;
         endif;
 
-        if ( '"!NA"' == $value ):
-            return NULL;
-        endif;
+        /**
+         * “!NA” not available
+         * “!NH” holiday (only applicable to US/Canadian securities)
+         * “!NE” not expected (e.g., prices for future dates)
+         * “!NR” not reported
+         * “!N5” an error code 5000 was returned
+         * “!N6” an error code 6000 was returned
+         * “!N7” an error code 7000 was returned
+         * “!N8” an error code 8000 was returned
+         */
+        return NULL;
     }
 }
